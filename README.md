@@ -12,12 +12,12 @@ Aşağıda kutucuk (checkbox) ile gösterilen maddelerden en az birini seçtiği
 
 ### Disk Erişimi
 
-- [ ]  **Blok bazlı disk erişimi** → block_id + offset
+- [X]  **Blok bazlı disk erişimi** → block_id + offset
 - [ ]  Rastgele erişim
 
 ### VT için Page (Sayfa) Anlamı
 
-- [ ]  VT hangisini kullanır? **Satır/ Sayfa** okuması
+- [X]  VT hangisini kullanır? **Satır/ Sayfa** okuması
 
 ---
 
@@ -26,11 +26,11 @@ Aşağıda kutucuk (checkbox) ile gösterilen maddelerden en az birini seçtiği
 - [ ]  Veritabanları, Sık kullanılan sayfaları bellekte (RAM) kopyalar mı (caching) ?
 
 - [ ]  LRU / CLOCK gibi algoritmaları
-- [ ]  Diske yapılan I/O nasıl minimize ederler?
+- [X]  Diske yapılan I/O nasıl minimize ederler?
 
 # 2. Veri Yapıları Perspektifi
 
-- [ ]  B+ Tree Veri Yapıları VT' lerde nasıl kullanılır?
+- [X]  B+ Tree Veri Yapıları VT' lerde nasıl kullanılır?
 - [ ]  VT' lerde hangi veri yapıları hangi amaçlarla kullanılır?
 - [ ]  Clustered vs Non-Clustered Index Kavramı
 - [ ]  InnoDB satırı diskte nasıl durur?
@@ -39,20 +39,20 @@ Aşağıda kutucuk (checkbox) ile gösterilen maddelerden en az birini seçtiği
 
 DB diske yazarken:
 
-- [ ]  WAL (Write Ahead Log) İlkesi
+- [X]  WAL (Write Ahead Log) İlkesi
 - [ ]  Log disk (fsync vs write) sistem çağrıları farkı
 
 ---
 
 # Özet Tablo
 
-| Kavram      | Bellek          | Disk / DB      |
-| ----------- | --------------- | -------------- |
-| Adresleme   | Pointer         | Page + Offset  |
-| Hız         | O(1)            | Page IO        |
-| PK          | Yok             | Index anahtarı |
-| Veri yapısı | Array / Pointer | B+Tree         |
-| Cache       | CPU cache       | Buffer Pool    |
+| Kavram      | Bellek                          | Disk / DB(SQLite) |
+| ----------- | ---------------                 | -------------- |
+| Adresleme   | Pointer(doğrudan hafıza adresi) | Page + Offset  |
+| Hız         | O(1) - doğrudan erişim          | Page IO        |
+| PK          | Yok                             | Index anahtarı |
+| Veri yapısı | Array / Linked List/ Pointer    | B+Tree         |
+| Cache       | CPU cache                       | Buffer Pool   |
 
 ---
 
@@ -63,22 +63,28 @@ Ekran kaydı. 2-3 dk. açık kaynak V.T. kodu üzerinde konunun gösterimi. Vide
 
 # Açıklama (Ort. 600 kelime)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacinia luctus urna, vel aliquet lacus facilisis ac. Donec quis placerat orci, efficitur consectetur lacus. Sed rhoncus erat ex, at sagittis velit mollis et. Aliquam enim orci, sollicitudin sit amet libero quis, mollis ultricies risus. Fusce tempor, felis a consequat tristique, dolor magna convallis nulla, vel ullamcorper magna mauris non ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam quis imperdiet ex, at blandit sapien. Aliquam lacinia erat ac ipsum fringilla, quis vestibulum augue posuere. Nulla in enim nulla. Nunc euismod odio mauris, sed sollicitudin ex condimentum non. In efficitur egestas enim. Fusce tempus erat quis placerat convallis.
+## Blok Bazlı Disk Erişimi (block_id + offset)
 
-Nam sit amet tincidunt ante. Pellentesque sit amet quam interdum, pellentesque dui vel, iaculis elit. Donec sed dui sodales nulla dignissim tincidunt. Maecenas semper metus id fermentum vulputate. Pellentesque lobortis hendrerit venenatis. Nullam imperdiet, ex eget ultricies egestas, mauris nunc aliquam ante, sed consectetur tellus ex vel leo. Nunc ut erat dapibus, auctor dolor eu, pretium sem. In lacinia congue eros et finibus. Aenean auctor, leo a feugiat placerat, urna felis lacinia purus, laoreet volutpat mi nisl eget dui. Ut vitae condimentum leo.
+Sistem programlama açısından diskler blok adreslenebilir cihazlardır ve veritabanları bu gerçeği yansıtacak şekilde tasarlanır. SQLite'da `src/pager.c` dosyası bu blok bazlı erişimi yönetir. Disk üzerindeki veriler 4KB veya 8KB'lik sayfalara (bloklara) bölünür; her sayfa bir `block_id` ile tanımlanır ve sayfa içindeki belirli bir kayda erişmek için `offset` değeri kullanılır. Bu yaklaşım, rasgele erişim maliyetini sabit O(1) seviyesinde tutar. `sqlite3PagerGet()` fonksiyonu, bir sayfa numarası (block_id) verildiğinde ilgili sayfayı bellek önbelleğine getirir, kullanıcılar ise sayfa içindeki offset değerleriyle kayıtlara erişir.
 
-Maecenas ex diam, vehicula et nulla vel, mattis viverra metus. Nam at ex scelerisque, semper augue lobortis, semper est. Etiam id pretium odio, eget rutrum neque. Pellentesque blandit magna vel aliquam gravida. Nullam massa nisl, imperdiet at dapibus non, cursus vehicula turpis. Vestibulum rutrum hendrerit augue. Aliquam id nisi id arcu tempor venenatis vel nec erat. Morbi sed posuere erat. Morbi et sollicitudin urna. Suspendisse ullamcorper vitae purus sit amet sodales. Nam ut tincidunt ipsum, ut varius erat. Duis congue magna nec euismod condimentum. In hac habitasse platea dictumst. Nunc mattis odio sed enim laoreet imperdiet. In hac habitasse platea dictumst. Nullam tincidunt quis.
+## Satır vs Sayfa Okuması: Veritabanlarının Tercihi
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacinia luctus urna, vel aliquet lacus facilisis ac. Donec quis placerat orci, efficitur consectetur lacus. Sed rhoncus erat ex, at sagittis velit mollis et. Aliquam enim orci, sollicitudin sit amet libero quis, mollis ultricies risus. Fusce tempor, felis a consequat tristique, dolor magna convallis nulla, vel ullamcorper magna mauris non ipsum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam quis imperdiet ex, at blandit sapien. Aliquam lacinia erat ac ipsum fringilla, quis vestibulum augue posuere. Nulla in enim nulla. Nunc euismod odio mauris, sed sollicitudin ex condimentum non. In efficitur egestas enim. Fusce tempus erat quis placerat convallis.
+SQLite ve diğer modern veritabanı sistemleri, disk I/O verimliliği için veriyi diskten sayfa bazında okur. Bir kullanıcı sadece bir satır istese bile, veritabanı bu satırın bulunduğu tüm sayfayı belleğe yükler. `btreeGetPage()` gibi fonksiyonlar diskten sayfa okurken, `btreeParseCell()` gibi fonksiyonlar belleğe alınmış bir sayfa içindeki hücreleri ayrıştırarak belirli bir kayda erişim sağlar. Bu strateji, yerellik (locality) prensibine dayanır: bir satıra erişen kullanıcının büyük olasılıkla aynı sayfadaki diğer satırlara da erişeceği varsayılır. Sayfa bazlı okuma, tek tek satır okuma işlemlerine göre daha az disk başvurusu gerektirdiğinden önemli performans kazancı sağlar.
 
-Nam sit amet tincidunt ante. Pellentesque sit amet quam interdum, pellentesque dui vel, iaculis elit. Donec sed dui sodales nulla dignissim tincidunt. Maecenas semper metus id fermentum vulputate. Pellentesque lobortis hendrerit venenatis. Nullam imperdiet, ex eget ultricies egestas, mauris nunc aliquam ante, sed consectetur tellus ex vel leo. Nunc ut erat dapibus, auctor dolor eu, pretium sem. In lacinia congue eros et finibus. Aenean auctor, leo a feugiat placerat, urna felis lacinia purus, laoreet volutpat mi nisl eget dui. Ut vitae condimentum leo.
+## Disk I/O'nun Minimizasyonu
 
-Maecenas ex diam, vehicula et nulla vel, mattis viverra metus. Nam at ex scelerisque, semper augue lobortis, semper est. Etiam id pretium odio, eget rutrum neque. Pellentesque blandit magna vel aliquam gravida. Nullam massa nisl, imperdiet at dapibus non, cursus vehicula turpis. Vestibulum rutrum hendrerit augue. Aliquam id nisi id arcu tempor venenatis vel nec erat. Morbi sed posuere erat. Morbi et sollicitudin urna. Suspendisse ullamcorper vitae purus sit amet sodales. Nam ut tincidunt ipsum, ut varius erat. Duis congue magna nec euismod condimentum. In hac habitasse platea dictumst. Nunc mattis odio sed enim laoreet imperdiet. In hac habitasse platea dictumst. Nullam tincidunt quis.
+Disk erişimleri, veritabanı performansındaki en kritik darboğazdır. SQLite, I/O işlemlerini azaltmak için iki ana mekanizma kullanır: **sayfa önbelleği (page cache)** ve **Write-Ahead Logging (WAL)**. Sayfa önbelleği, sık erişilen veri sayfalarını bellekte tutarak tekrarlanan disk okumalarını önler. `src/pager.c` dosyasında önbellek politikaları ve dirty page listesi yönetimi uygulanır; dirty page'ler (bellekte değiştirilmiş ancak diske yazılmamış sayfalar) toplu halde yazılarak yazma işlemlerinin sayısı azaltılır. WAL mekanizması ise `src/wal.c` dosyasında gerçekleştirilir. Geleneksel "rollback journal" yönteminin aksine, WAL'de değişiklikler önce ayrı bir WAL dosyasına eklenir. Veri dosyasına yazma işlemleri daha sonra, checkpoint adı verilen aralıklarla toplu halde gerçekleştirilir. Bu yaklaşım, özellikle çoklu işlem ortamlarında okuma ve yazma işlemlerinin paralelleşmesini sağlayarak performansı önemli ölçüde artırır.
+
+## B+ Tree Veri Yapısının Kullanımı
+
+SQLite, tablo ve indeks verilerini düzenlemek için B-tree (B+ ağacı özelliklerine sahip) veri yapısını kullanır. Bu yapının tüm uygulaması `btree.c` dosyasında bulunur. B-tree'ler, dengeli ağaç yapısı sayesinde arama, ekleme ve silme işlemlerini O(log n) zaman karmaşıklığında gerçekleştirir. Bu ağaç yapısının önemli özellikleri şunlardır: yaprak düğümler birbirine bağlı olduğundan aralık sorguları (range queries) çok verimlidir; her düğüm çok sayıda alt düğüm işaretçisi içerebilir (yüksek fan-out), bu da ağacın derinliğini azaltır; tablo iç düğümleri sadece anahtar ve işaretçi içerir ve veri sadece yapraklarda tutulur, oysa indeks iç düğümleri anahtar ile birlikte veri taşıyabilir. BtCursor yapısı ağaç üzerinde gezinmeyi sağlarken, `balance()` fonksiyonu ağaç dengesini korumak için üç stratejiden birini kullanır: `balance_quick()` hızlı dengeleme için yeni kardeş node oluşturur, `balance_deeper()` ağaca yeni seviye ekler, `balance_nonroot()` komşu node'lar arasında hücreleri yeniden dağıtarak sayfa bölme ve birleştirme işlemlerini gerçekleştirir.
+
+## WAL (Write Ahead Log) İlkesi
+
+WAL, ACID uyumluluğunu sağlarken performansı korumak için kullanılan temel bir veritabanı ilkesidir. SQLite'ın `src/wal.c` dosyası bu mekanizmanın tam uygulamasını içerir. WAL ilkesi, "önce log yaz" prensibine dayanır: bir işlem veriyi kalıcı depolamaya yazmadan önce, yapacağı değişiklikleri log kaydı olarak yazmalıdır. WAL'in çalışma prensibi şöyledir: tüm değişiklikler önce WAL dosyasına eklenir (append-only); veri dosyası değiştirilmeden önce log kayıtları kalıcı hale getirilir; checkpoint işlemi periyodik olarak WAL'deki değişiklikleri ana veri dosyasına uygular; okuma işlemleri, hem veri dosyasını hem de WAL'deki ilgili kayıtları okuyabilir. Bu yaklaşımın avantajları şunlardır: yazarlar okuyucuları engellemez (okuma-yazma paralelliği); değişiklikler sıralı olarak WAL dosyasına eklendiğinden rasgele erişimden daha hızlıdır (daha az disk yazma işlemi); commit sadece WAL'e bir kayıt eklemeyi gerektirir (daha hızlı commit işlemi). SQLite'da `sqlite3WalFrames()` fonksiyonu değişiklik çerçevelerini WAL dosyasına yazarken, `sqlite3WalCheckpoint()` fonksiyonu ihtiyaca göre WAL içeriğini ana veritabanı dosyasına aktarır.
 
 ## VT Üzerinde Gösterilen Kaynak Kodları
 
-Açıklama [Linki](https://...) \
-Açıklama [Linki](https://...) \
-Açıklama [Linki](https://...) \
-... \
-...
+Açıklama [Linki](https://github.com/sqlite/sqlite/blob/master/src/pager.c) \
+Açıklama [Linki](https://github.com/sqlite/sqlite/blob/master/src/btree.c) \
+Açıklama [Linki](https://github.com/sqlite/sqlite/blob/master/src/wal.c) \
