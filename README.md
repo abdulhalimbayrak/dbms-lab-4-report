@@ -65,7 +65,7 @@ Ekran kaydı. 2-3 dk. açık kaynak V.T. kodu üzerinde konunun gösterimi. Vide
 
 ## Blok Bazlı Disk Erişimi (block_id + offset)
 
-Sistem programlama açısından diskler blok adreslenebilir cihazlardır ve veritabanları bu gerçeği yansıtacak şekilde tasarlanır. SQLite'da `src/pager.c` dosyası bu blok bazlı erişimi yönetir. Disk üzerindeki veriler 4KB veya 8KB'lik sayfalara (bloklara) bölünür; her sayfa bir `block_id` ile tanımlanır ve sayfa içindeki belirli bir kayda erişmek için `offset` değeri kullanılır. Bu yaklaşım, rasgele erişim maliyetini sabit O(1) seviyesinde tutar. `sqlite3PagerGet()` fonksiyonu, bir sayfa numarası (block_id) verildiğinde ilgili sayfayı bellek önbelleğine getirir, kullanıcılar ise sayfa içindeki offset değerleriyle kayıtlara erişir.
+İşletim sistemi açısından diskler blok adreslenebilir cihazlardır ve veritabanları bunu yansıtacak şekilde tasarlanır. SQLite'da pager.c bu sayfa (block) bazlı erişimi yönetir. Disk verileri tipik olarak 4KB/8KB gibi sayfalara bölünür; her sayfa bir sayfa numarası (pgno) ile tanımlanır ve sayfa içindeki belirli bir kayda erişmek için bir offset kullanılır. Disk byte-ofset'i hesaplamak şöyle olur: (pgno-1)*pageSize + offset. `sqlite3PagerGet()` fonksiyonu bir sayfa numarası verildiğinde ilgili sayfayı pager önbelleğine getirir; kullanıcılar/üst katmanlar ise sayfa içindeki offset'lerle kayda erişir.
 
 ## Satır vs Sayfa Okuması: Veritabanlarının Tercihi
 
@@ -85,6 +85,7 @@ WAL, ACID uyumluluğunu sağlarken performansı korumak için kullanılan temel 
 
 ## VT Üzerinde Gösterilen Kaynak Kodları
 
-Açıklama [Linki](https://github.com/sqlite/sqlite/blob/master/src/pager.c) \
-Açıklama [Linki](https://github.com/sqlite/sqlite/blob/master/src/btree.c) \
-Açıklama [Linki](https://github.com/sqlite/sqlite/blob/master/src/wal.c) \
+pager.c [Linki](https://github.com/sqlite/sqlite/blob/master/src/pager.c) \
+btree.c [Linki](https://github.com/sqlite/sqlite/blob/master/src/btree.c) \
+btreenin tanımlandığı sınıf btreeInt.h [Linki](https://github.com/mackyle/sqlite/blob/master/src/btreeInt.h) \
+wal.c [Linki](https://github.com/sqlite/sqlite/blob/master/src/wal.c)
