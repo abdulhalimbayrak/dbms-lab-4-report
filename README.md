@@ -57,7 +57,7 @@ DB diske yazarken:
 ---
 
 # Video [Linki](https://youtu.be/mMb1DzxIbBM) 
-
+[Linki](https://youtu.be/mMb1DzxIbBM) 
 ---
 
 # Açıklama (Ort. 600 kelime)
